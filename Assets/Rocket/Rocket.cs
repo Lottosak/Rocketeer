@@ -17,8 +17,9 @@ public class Rocket : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Thrust();
-        Rotate();
+	    if (CollisionDetector.state != CollisionDetector.State.Alive) return;
+	    Thrust();
+	    Rotate();
 	}
 
     private void Thrust()
