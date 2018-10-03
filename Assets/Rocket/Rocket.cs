@@ -8,6 +8,7 @@ public class Rocket : MonoBehaviour {
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
     [SerializeField] AudioClip thrustAudio;
+    [SerializeField] ParticleSystem thrustParticles;
 
     Rigidbody rigidbody;
     AudioSource audioSource;
@@ -34,10 +35,12 @@ public class Rocket : MonoBehaviour {
             {
                 audioSource.PlayOneShot(thrustAudio);
             }
+            thrustParticles.Play();
         }
         else
         {
             audioSource.Stop();
+            thrustParticles.Stop();
         }
     }
 

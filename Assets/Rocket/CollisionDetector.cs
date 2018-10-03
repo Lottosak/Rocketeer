@@ -11,6 +11,10 @@ public class CollisionDetector : MonoBehaviour {
 
     [SerializeField] AudioClip winAudio;
     [SerializeField] AudioClip destroyedAudio;
+
+    [SerializeField] ParticleSystem winParticles;
+    [SerializeField] ParticleSystem destroyedParticles;
+
     private AudioSource audioSource;
 
     public static State state = State.Alive;
@@ -22,7 +26,11 @@ public class CollisionDetector : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+
+	    if (Input.GetKey(KeyCode.L))
+	    {
+            LoadNextLevel();
+	    }
 	}
 
     void OnCollisionEnter(Collision col)
@@ -32,10 +40,10 @@ public class CollisionDetector : MonoBehaviour {
         switch (col.gameObject.tag)
         {
             case "Enemy":
-                WinSequence();
+                DeathSequence();
                 break;
             case "Finish":
-                DeathSequence();
+                WinSequence();
                 break;
             default:
 
@@ -43,31 +51,43 @@ public class CollisionDetector : MonoBehaviour {
         }
     }
 
-    private void DeathSequence()
+    private void WinSequence()
     {
         audioSource.Stop();
         audioSource.PlayOneShot(winAudio);
+        winParticles.Play();
         state = State.Transcending;
         Invoke("LoadNextLevel", 1f);
     }
 
-    private void WinSequence()
+    private void DeathSequence()
     {
         audioSource.Stop();
         audioSource.PlayOneShot(destroyedAudio);
+        destroyedParticles.Play();
         state = State.Dying;
-        Invoke("LoadFirstLevel", 1f);
+        Invoke("ReloadLevel", 1f);
     }
 
-    private void LoadFirstLevel()
+    private void ReloadLevel()
     {
         state = State.Alive;
-        SceneManager.LoadScene(0);
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     private void LoadNextLevel()
     {
         state = State.Alive;
-        SceneManager.LoadScene(1);
+        int curScene = SceneManager.GetActiveScene().buildIndex;
+        if (curScene == SceneManager.sceneCountInBuildSettings - 1)
+        {
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            SceneManager.LoadScene(curScene + 1);
+        }
+        
     }
 }
