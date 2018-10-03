@@ -9,10 +9,15 @@ public class CollisionDetector : MonoBehaviour {
         Alive, Dying, Transcending
     }
 
+    [SerializeField] AudioClip winAudio;
+    [SerializeField] AudioClip destroyedAudio;
+    private AudioSource audioSource;
+
     public static State state = State.Alive;
 	// Use this for initialization
-	void Start () {
-		
+	void Start ()
+	{
+	    audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -27,17 +32,31 @@ public class CollisionDetector : MonoBehaviour {
         switch (col.gameObject.tag)
         {
             case "Enemy":
-                state = State.Dying;
-                Invoke("LoadFirstLevel", 1f);
+                WinSequence();
                 break;
             case "Finish":
-                state = State.Transcending;
-                Invoke("LoadNextLevel", 1f);
+                DeathSequence();
                 break;
             default:
 
                 break;
         }
+    }
+
+    private void DeathSequence()
+    {
+        audioSource.Stop();
+        audioSource.PlayOneShot(winAudio);
+        state = State.Transcending;
+        Invoke("LoadNextLevel", 1f);
+    }
+
+    private void WinSequence()
+    {
+        audioSource.Stop();
+        audioSource.PlayOneShot(destroyedAudio);
+        state = State.Dying;
+        Invoke("LoadFirstLevel", 1f);
     }
 
     private void LoadFirstLevel()

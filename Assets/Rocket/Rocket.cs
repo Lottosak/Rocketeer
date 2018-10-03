@@ -7,12 +7,15 @@ public class Rocket : MonoBehaviour {
 
     [SerializeField] float rcsThrust = 100f;
     [SerializeField] float mainThrust = 100f;
+    [SerializeField] AudioClip thrustAudio;
 
     Rigidbody rigidbody;
+    AudioSource audioSource;
 
 	// Use this for initialization
 	void Start () {
         rigidbody = GetComponent<Rigidbody>();
+	    audioSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -27,6 +30,14 @@ public class Rocket : MonoBehaviour {
         if (Input.GetKey(KeyCode.Space))
         {
             rigidbody.AddRelativeForce(Vector3.up * mainThrust);
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayOneShot(thrustAudio);
+            }
+        }
+        else
+        {
+            audioSource.Stop();
         }
     }
 
